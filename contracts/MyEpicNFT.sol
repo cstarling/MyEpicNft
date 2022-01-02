@@ -10,6 +10,7 @@ import "hardhat/console.sol";
 import { Base64 } from "./libraries/Base64.sol";
 
 contract MyEpicNFT is ERC721URIStorage {
+  bool public saleIsActive = true;
   uint256 public constant MAX_SUPPLY = 10000;
   uint256 public constant MAX_PUBLIC_MINT = 6;
   uint256 public constant PRICE_PER_TOKEN = 0.001 ether;
@@ -26,6 +27,10 @@ contract MyEpicNFT is ERC721URIStorage {
     console.log("This is my NFT contract. Woah!");
   }
 
+
+  function setSaleState(bool newState) public {
+        saleIsActive = newState;
+    }
 
   function getAmountMinted() public view returns (uint256) {
     return _tokenIds.current();
@@ -54,6 +59,7 @@ contract MyEpicNFT is ERC721URIStorage {
   }
 
   function makeAnEpicNFT(uint256 numberOfTokens) public payable {
+    require(saleIsActive, "Sale must be active to mint tokens");
     require(PRICE_PER_TOKEN * numberOfTokens <= msg.value, "Ether value sent is not correct");
     for (uint256 i = 0; i < numberOfTokens; i++) {
       uint256 newItemId = _tokenIds.current();
